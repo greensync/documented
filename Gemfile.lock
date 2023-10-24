@@ -1,0 +1,23 @@
+PATH
+  remote: .
+  specs:
+    documented (0.0.0)
+      parser
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ast (2.4.2)
+    parser (3.2.2.4)
+      ast (~> 2.4.1)
+      racc
+    racc (1.7.1)
+
+PLATFORMS
+  arm64-darwin-22
+
+DEPENDENCIES
+  documented!
+
+BUNDLED WITH
+   2.4.19
