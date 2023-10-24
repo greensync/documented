@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+################################################################################
+# Usage:
+#   documented <command>
+#
+# Example:
+#   documented bundle exec rspec example_spec.rb
+################################################################################
+
+ENV['DOCUMENTED_ENABLED'] = Time.now.to_i.to_s
+
+args = []
+ARGV.each do |arg|
+  args << arg
+end
+args = args.join(' ')
+
+exec args
