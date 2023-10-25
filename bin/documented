@@ -1,9 +1,8 @@
 #!/usr/bin/env ruby
 
-require 'parser/current'
-require 'unparser'
-
-#require_relative '../lib/documented'
+# require 'parser/current'
+# require 'unparser'
+require 'rubocop'
 
 ################################################################################
 # Usage:
@@ -14,10 +13,23 @@ require 'unparser'
 ################################################################################
 
 file_path = ARGV.first
-imported = Parser::CurrentRuby.parse_file(file_path)
-exported = Unparser.unparse(imported)
 
-eval(exported)
+code = File.read(file_path)
+source = RuboCop::ProcessedSource.new(code, 3)
+source_buffer = source.buffer
+rewriter = Parser::Source::TreeRewriter.new(source_buffer)
+
+source.ast.children.filter { |child| child.deconstruct[2] == :require_relative }.map do |child|
+  path = child.deconstruct[3].deconstruct[1]
+  range = child&.location&.expression
+  
+  rewriter.replace(range, "require File.expand_path('#{path}')")
+end
+
+eval(rewriter.process)
 
 # Documented.setup()
 # `#{args}`
+
+# parsed = Parser::CurrentRuby.parse_file(file_path)
+# unparsed = Unparser.unparse(processed)
