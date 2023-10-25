@@ -1,14 +1,16 @@
-require File.expand_path('./cat')
-require File.expand_path('./dog')
-require File.expand_path('./place')
+require_relative './cat'
+require_relative './dog'
+require_relative './place'
 
-# # You onlyl need to require Documented when you configure it.
+# You only need to require Documented when you configure it.
 # require_relative '../lib/documented'
 # Documented.configure do |config|
 #   config.blocklist = config.blocklist + [
 #     'ExampleClass',
 #   ]
 # end
+
+# documented:enable
 
 # They meet on a city street.
 street = Place.new("City Street")
@@ -40,3 +42,5 @@ if cat.is_friendly()
 else
   # They part ways.
 end
+
+# documented:disable
