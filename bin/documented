@@ -1,19 +1,23 @@
 #!/usr/bin/env ruby
 
+require 'parser/current'
+require 'unparser'
+
+#require_relative '../lib/documented'
+
 ################################################################################
 # Usage:
-#   documented <command>
+#   documented <file_path>
 #
 # Example:
-#   documented bundle exec rspec example_spec.rb
+#   documented spec/example_spec.rb
 ################################################################################
 
-ENV['DOCUMENTED_ENABLED'] = Time.now.to_i.to_s
+file_path = ARGV.first
+imported = Parser::CurrentRuby.parse_file(file_path)
+exported = Unparser.unparse(imported)
 
-args = []
-ARGV.each do |arg|
-  args << arg
-end
-args = args.join(' ')
+eval(exported)
 
-exec args
+# Documented.setup()
+# `#{args}`

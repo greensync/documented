@@ -2,7 +2,8 @@ module Documented
   class Config
     attr_accessor :blocklist
     attr_accessor :duplicates
-    attr_accessor :project_path
+    attr_accessor :app_path
+    attr_accessor :gem_path
     attr_accessor :output_directory
 
     def initialize()
@@ -36,10 +37,11 @@ module Documented
         'URI::Generic',
       ]
 
-      # An absolute path to the project root directory. Defaults to current execution path.
-      @project_path = Dir.pwd
+      @duplicates = false
 
-      # Name of output directory.
+      @app_path = Dir.pwd
+      @gem_path = File.dirname(File.realpath(__FILE__))
+
       @output_directory = "documented"
     end
   end

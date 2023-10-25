@@ -1,7 +1,7 @@
 module Documented
   class Renderer
-    def initialize(package_path, output_path)
-      @package_path = package_path
+    def initialize(gem_path, output_path)
+      @gem_path = gem_path
       @output_path = output_path
     end
 
@@ -12,13 +12,13 @@ module Documented
       ]
 
       filenames.each do |filename|
-        file = File.read(File.join(@package_path, "output", filename))
+        file = File.read(File.join(@gem_path, "output", filename))
         File.open(File.join(@output_path, filename), 'w+') do |f|
           f.write file
         end
       end
 
-      file = File.read(File.join(@package_path, "output", "gitignore.txt"))
+      file = File.read(File.join(@gem_path, "output", "gitignore.txt"))
       File.open(File.join(@output_path, ".gitignore"), 'w+') do |f|
         f.write file
       end

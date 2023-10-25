@@ -1,14 +1,14 @@
-require_relative '../lib/documented.rb'
+require File.expand_path('./cat')
+require File.expand_path('./dog')
+require File.expand_path('./place')
 
-require_relative 'cat'
-require_relative 'dog'
-require_relative 'place'
-
-Documented.configure do |config|
-  config.blocklist = config.blocklist + [
-    'ExampleClass',
-  ]
-end
+# # You onlyl need to require Documented when you configure it.
+# require_relative '../lib/documented'
+# Documented.configure do |config|
+#   config.blocklist = config.blocklist + [
+#     'ExampleClass',
+#   ]
+# end
 
 # They meet on a city street.
 street = Place.new("City Street")
