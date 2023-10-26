@@ -12,6 +12,8 @@ require 'rubocop'
 #   documented spec/example_spec.rb
 ################################################################################
 
+METHOD_NAME = 2.freeze
+
 file_path = ARGV.first
 
 code = File.read(file_path)
@@ -19,8 +21,8 @@ source = RuboCop::ProcessedSource.new(code, 3)
 source_buffer = source.buffer
 rewriter = Parser::Source::TreeRewriter.new(source_buffer)
 
-source.ast.children.filter { |child| child.deconstruct[2] == :require_relative }.map do |child|
-  path = child.deconstruct[3].deconstruct[1]
+source.ast.children.filter { |child| child.deconstruct[METHOD_NAME] == :require_relative }.map do |child|
+  path = child.children.last.children.first
   range = child&.location&.expression
   
   rewriter.replace(range, "require File.expand_path('#{path}')")
