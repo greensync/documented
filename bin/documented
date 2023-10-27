@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-# require 'parser/current'
-# require 'unparser'
 require 'rubocop'
 
 ################################################################################
