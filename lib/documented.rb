@@ -3,7 +3,8 @@ require_relative './tracer'
 
 module Documented
   class << self
-    def setup()
+    def setup(source)
+      @@source = source
       @@config = Config.new
       @@tracer = Tracer.new(@@config.blocklist)
 
@@ -11,16 +12,24 @@ module Documented
       Dir.mkdir(output_path) unless Dir.exist? output_path
 
       @@renderer = Renderer.new(@@config.gem_path, output_path)
+    end
 
-      self
+    def enable
+      @@tracer.enable
+      # TODO: @@schema.enable
+    end
+
+    def disable
+      @@tracer.disable
+      # TODO: @@schema.disable
+    end
+
+    def source
+      @@source
     end
 
     def config
       @@config
-    end
-
-    def tracer
-      @@tracer
     end
 
     # Allow end-user to override config.
