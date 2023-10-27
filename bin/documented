@@ -12,37 +12,32 @@ require 'rubocop'
 #   documented spec/example_spec.rb
 ################################################################################
 
-METHOD_NAME = 2.freeze
-
 file_path = ARGV.first
-
 code = File.read(file_path)
 source = RuboCop::ProcessedSource.new(code, 3)
 source_buffer = source.buffer
 rewriter = Parser::Source::TreeRewriter.new(source_buffer)
 
-source.ast.children.filter { |child| child.deconstruct[METHOD_NAME] == :require_relative }.map do |child|
+# TODO: Don't need once we use temporary files instead of eval().
+source.ast.children.filter { |child| child.deconstruct[2] == :require_relative }.map do |child|
   path = child.children.last.children.first
   range = child&.location&.expression
-  
   rewriter.replace(range, "require File.expand_path('#{path}')")
 end
 
-first_child_range = source.ast.children.first.loc.expression
-new_tracer = <<-RUBY
-
-  require File.expand_path('../lib/documented')
-  Documented.setup()
+setup = <<-RUBY
+  \n require File.expand_path('../lib/documented')
+  Documented.setup(source)
 RUBY
-rewriter.insert_after(first_child_range, new_tracer)
+rewriter.insert_after(source.ast.children.first.loc.expression, setup)
 
 source.comments.each do |comment|
+  range = comment.location.expression
+
   if comment.text.start_with?('# documented:enable')
-    range = comment.location.expression
-    rewriter.replace(range, "Documented.tracer.enable")
+    rewriter.replace(range, "Documented.enable")
   elsif comment.text.start_with?('# documented:disable')
-    range = comment.location.expression
-    rewriter.replace(range, "Documented.tracer.disable")
+    rewriter.replace(range, "Documented.disable")
   end
 end
 

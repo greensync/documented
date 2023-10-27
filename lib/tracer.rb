@@ -23,12 +23,6 @@ module Documented
       @trace_point.disable
     end
 
-    def write
-      # file = File.open("#{__dir__}/../../doc/diagrams/input.mmd")
-      # file.write("sequenceDiagram\n")
-      # file.close
-    end
-
     private
 
     def create_trace_point
