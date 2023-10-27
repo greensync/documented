@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require 'rubocop'
 
 ################################################################################
@@ -10,22 +9,16 @@ require 'rubocop'
 #   documented spec/example_spec.rb
 ################################################################################
 
-file_path = ARGV.first
+file_path = File.join(Dir.pwd, ARGV.first)
 code = File.read(file_path)
 source = RuboCop::ProcessedSource.new(code, 3)
 source_buffer = source.buffer
 rewriter = Parser::Source::TreeRewriter.new(source_buffer)
 
-# TODO: Don't need once we use temporary files instead of eval().
-source.ast.children.filter { |child| child.deconstruct[2] == :require_relative }.map do |child|
-  path = child.children.last.children.first
-  range = child&.location&.expression
-  rewriter.replace(range, "require File.expand_path('#{path}')")
-end
-
 setup = <<-RUBY
+  # TODO: This needs to be `require 'documented'` to work outside of development.
   \n require File.expand_path('../lib/documented')
-  Documented.setup(source)
+  Documented.setup
 RUBY
 rewriter.insert_after(source.ast.children.first.loc.expression, setup)
 
@@ -39,5 +32,14 @@ source.comments.each do |comment|
   end
 end
 
-# TODO: Create a temporary files instead and run as `bundle exec rspec <filepath>`
-eval(rewriter.process)
+file_name = 'tmp-' + File.basename(file_path)
+directory = File.dirname(file_path)
+file_path = File.join(directory, file_name)
+
+File.write(file_path, rewriter.process)
+
+# TODO: Use RSpec or Cucumber depending on file extension.
+# file_extension = File.extname(file_path)
+system("ruby #{file_path}")
+
+File.delete(file_path)

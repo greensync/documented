@@ -3,8 +3,7 @@ require_relative './tracer'
 
 module Documented
   class << self
-    def setup(source)
-      @@source = source
+    def setup
       @@config = Config.new
       @@tracer = Tracer.new(@@config.blocklist)
 
