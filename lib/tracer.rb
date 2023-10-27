@@ -8,14 +8,16 @@ module Documented
   class Tracer
     attr_reader :results
 
-    def initialize
+    def initialize(blocklist)
       @results = []
+      @blocklist = blocklist
       @trace_point = create_trace_point()
     end
 
     def enable
       @results = []
       @trace_point.enable
+    end
     
     def disable
       @trace_point.disable
@@ -37,7 +39,7 @@ module Documented
         callee = trace_point.defined_class.to_s
         event = trace_point.event
     
-        unless blocklist.any? { |e| callee.to_s.start_with? e }
+        unless @blocklist.any? { |e| callee.to_s.start_with? e }
           unless calls.last == callee
             if event == :return
               calls.pop
