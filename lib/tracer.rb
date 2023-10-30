@@ -6,21 +6,21 @@ require_relative 'renderer'
 
 module Documented
   class Tracer
-    attr_reader :results
+    attr_reader :sequence
 
     def initialize(blocklist)
-      @results = []
       @blocklist = blocklist
       @trace_point = create_trace_point()
     end
 
     def enable
-      @results = []
+      @sequence = []
       @trace_point.enable
     end
     
     def disable
       @trace_point.disable
+      Documented.add_sequence(@sequence)
     end
 
     private
@@ -45,7 +45,7 @@ module Documented
           unless callee == caller
             caller = caller.gsub('::','.')
             callee = callee.gsub('::','.')
-            @results << "#{caller}->>#{callee}: #{trace_point.method_id}"
+            @sequence << "#{caller}->>#{callee}: #{trace_point.method_id}"
           end
         end
       end

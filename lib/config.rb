@@ -9,6 +9,7 @@ module Documented
     def initialize()
       @blocklist = [
         '#<Class:Bundler',
+        '#<Class:Documented>',
         '#<Class:#<Class',
         '#<Class:0x0000',
         '#<Class:Cucumber',
@@ -23,6 +24,7 @@ module Documented
         'Bundler',
         'Cucumber',
         'Datadog',
+        'Documented',
         'Float',
         'Helpers',
         'Integer',

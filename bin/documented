@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-require 'rubocop'
+require lib_path = File.expand_path('../lib/documented')
+require '../lib/rewriter'
 
 ################################################################################
 # Usage:
@@ -10,36 +11,10 @@ require 'rubocop'
 ################################################################################
 
 file_path = File.join(Dir.pwd, ARGV.first)
-code = File.read(file_path)
-source = RuboCop::ProcessedSource.new(code, 3)
-source_buffer = source.buffer
-rewriter = Parser::Source::TreeRewriter.new(source_buffer)
 
-setup = <<-RUBY
-  # TODO: This needs to be `require 'documented'` to work outside of development.
-  \n require File.expand_path('../lib/documented')
-  Documented.setup
-RUBY
-rewriter.insert_after(source.ast.children.first.loc.expression, setup)
-
-source.comments.each do |comment|
-  range = comment.location.expression
-
-  if comment.text.start_with?('# documented:enable')
-    rewriter.replace(range, "Documented.enable")
-  elsif comment.text.start_with?('# documented:disable')
-    rewriter.replace(range, "Documented.disable")
-  end
-end
-
-file_name = 'tmp-' + File.basename(file_path)
-directory = File.dirname(file_path)
-file_path = File.join(directory, file_name)
-
-File.write(file_path, rewriter.process)
-
-# TODO: Use RSpec or Cucumber depending on file extension.
-# file_extension = File.extname(file_path)
-system("ruby #{file_path}")
-
-File.delete(file_path)
+rewriter = Documented::Rewriter.new(file_path)
+rewriter.require_library(lib_path)
+rewriter.replace_comments
+rewriter.write
+rewriter.execute
+rewriter.delete
