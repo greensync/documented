@@ -9,8 +9,8 @@
   </a>
   <img src="https://img.shields.io/github/languages/code-size/greensync/documented" alt="GitHub code size in bytes">
   <img src="https://img.shields.io/gem/dt/documented">
-  <a href="https://www.codetriage.com/refiekt/documented" alt="Open Source Helpers">
-    <img src="https://www.codetriage.com/refiekt/documented/badges/users.svg" />
+  <a href="https://www.codetriage.com/greensync/documented" alt="Open Source Helpers">
+    <img src="https://www.codetriage.com/greensync/documented/badges/users.svg" />
   </a>
 </p>
 
