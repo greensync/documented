@@ -1,6 +1,5 @@
 ```mermaid
 sequenceDiagram;
-  Start->>Place: initialize
   Place->>Animal: initialize
   Animal->>Cat: meow
   Cat->>Animal: talk
