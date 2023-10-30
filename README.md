@@ -20,14 +20,22 @@ Designed to work with https://marketplace.visualstudio.com/items?itemName=bierne
 
 ## Usage  
 
-Add `# documented:enable` and `# documented:disable` anywhere in your tests:
+Add `# documented:enable` and `# documented:disable` comments anywhere in your tests:
 ```ruby
 # documented:enable
 my_method(do_stuff: true)
 # documented:disable
 ```  
 
-Run tests via the `documented` CLI and documentation will start showing up in the `documented` folder:
+Then run your test via the `documented` CLI like:
+```
+documented spec/example_spec.rb
+```
+
+Documentation will start showing up in the `documented` folder:
+<p align="center">
+  <img src="./assets/screenshot.png" raw=true style="margin-left: auto; margin-right: auto;"/>
+</p>
 
 ## Installation
 
