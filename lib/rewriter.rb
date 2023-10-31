@@ -13,9 +13,9 @@ module Documented
       @tree = Parser::Source::TreeRewriter.new(@source.buffer)
     end
 
-    def require_library(lib_path)
+    def require_library(gem_path)
       setup = <<-RUBY
-        \n require "#{lib_path}"
+        \n require "#{gem_path}/lib/documented"
         Documented.setup("#{@file_path}")
       RUBY
       @tree.insert_after(@source.ast.children.first.loc.expression, setup)

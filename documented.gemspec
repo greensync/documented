@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name        = 'documented'
-  spec.version     = '0.1.0'
+  spec.version     = '0.1.1'
   spec.date        = '2023-10-24'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
