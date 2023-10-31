@@ -41,6 +41,7 @@ if cat.is_friendly()
   places << Place.new("Madrid")
 else
   # They part ways.
+  heart_broken = true
 end
 
 # documented:disable

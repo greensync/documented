@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    documented (0.1.0)
+    documented (0.1.1)
       rubocop
 
 GEM

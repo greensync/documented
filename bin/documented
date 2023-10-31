@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
-require lib_path = File.expand_path('../lib/documented')
-require '../lib/rewriter'
+
+gem_path = File.expand_path('../../', __FILE__)
+require File.join(gem_path, 'lib/documented')
+require File.join(gem_path, 'lib/rewriter')
 
 ################################################################################
 # Usage:
@@ -13,7 +15,7 @@ require '../lib/rewriter'
 file_path = File.join(Dir.pwd, ARGV.first)
 
 rewriter = Documented::Rewriter.new(file_path)
-rewriter.require_library(lib_path)
+rewriter.require_library(gem_path)
 rewriter.replace_comments
 rewriter.write
 rewriter.execute

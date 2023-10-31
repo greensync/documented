@@ -26,28 +26,36 @@ module Documented
     private
 
     def create_trace_point
-      calls = ['Start']
+      calls = []
 
       return TracePoint.new(:call, :return) do |trace_point|
+        callee = trace_point.self.class.to_s
+
+        next if @blocklist.any? do |class_name|
+          callee.start_with?(class_name) || trace_point.defined_class.to_s.start_with?(class_name)
+        end
+
+        calls << callee if calls.empty?
         caller = calls.last.to_s
-        callee = trace_point.defined_class.to_s
+        next if trace_point.method_id == :initialize && caller == callee && !@sequence.empty?
+
         event = trace_point.event
-    
-        unless @blocklist.any? { |e| callee.to_s.start_with? e }
-          unless calls.last == callee
-            if event == :return
-              calls.pop
-            elsif calls.last != callee
-              calls << callee
-            end
-          end
-    
-          unless callee == caller
-            caller = caller.gsub('::','.')
-            callee = callee.gsub('::','.')
-            @sequence << "#{caller}->>#{callee}: #{trace_point.method_id}"
+
+        unless calls.last == callee
+          if event == :return
+            calls.pop
+          elsif calls.last != callee
+            calls << callee
           end
         end
+  
+        caller.gsub!('::','.')
+        callee.gsub!('::','.')
+        event = "#{caller}->>#{callee}: #{trace_point.method_id}"
+
+        next if @sequence.last == event
+
+        @sequence << event
       end
     end
   end
