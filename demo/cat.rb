@@ -7,6 +7,6 @@ class Cat < Animal
   end
 
   def is_friendly()
-    false
+    true
   end
 end
