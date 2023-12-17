@@ -2,21 +2,55 @@
 
 gem_path = File.expand_path('../../', __FILE__)
 require File.join(gem_path, 'lib/documented')
-require File.join(gem_path, 'lib/rewriter')
+require_relative '../lib/cloner'
+require_relative '../lib/rewriter'
 
 ################################################################################
 # Usage:
-#   documented <file_path>
+#   documented :entry_file_path
 #
 # Example:
 #   documented spec/example_spec.rb
+#   documented cucumber/example.feature
+#
+# Understanding:
+#   It's the file at :entry_file_path that actually runs the gem. This file is just rewriting that file to do that, 
+#   by requiring the gem in that file and replacing comments with trace points.
 ################################################################################
 
-file_path = File.join(Dir.pwd, ARGV.first)
+def execute(gem_name:, file_path:)
+  system("bundle exec #{gem_name} #{file_path}")
+end
 
-rewriter = Documented::Rewriter.new(file_path)
+def get_gem_name(file_path:)
+  return :rspec if file_path.end_with?('_spec.rb')
+  return :cucumber if file_path.end_with?('.feature')
+
+  :ruby
+end
+
+entry_file_path = File.join(Dir.pwd, ARGV.first)
+directory_path = File.dirname(entry_file_path)
+gem_name = get_gem_name(file_path: entry_file_path)
+
+temp_file_paths = []
+
+case gem_name
+when :rspec
+  temp_file_paths << Documented::Cloner.clone(directory_path:, file_paths: [entry_file_path])
+when :cucumber
+  all_file_paths = Dir["#{directory_path}/**/*"]
+  temp_file_paths << Documented::Cloner.clone(directory_path:, file_paths: all_file_paths)
+end
+
+temp_entry_file_path = Documented::Cloner.temp_file_path(directory_path:, file_path: entry_file_path)
+rewriter = Documented::Rewriter.new(temp_entry_file_path)
 rewriter.require_library(gem_path)
 rewriter.replace_comments
-rewriter.write
-rewriter.execute
-rewriter.delete
+rewriter.write(temp_entry_file_path)
+
+execute(gem_name:, file_path: temp_entry_file_path)
+
+temp_file_paths.each do |temp_file_path|
+  rewriter.delete(temp_file_path)
+end

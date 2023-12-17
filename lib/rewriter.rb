@@ -3,6 +3,8 @@ require_relative './config'
 
 module Documented
   class Rewriter
+    class ParseError < StandardError; end
+
     attr_accessor :file_path
     attr_accessor :source
     attr_accessor :tree
@@ -18,6 +20,9 @@ module Documented
         \n require "#{gem_path}/lib/documented"
         Documented.setup("#{@file_path}")
       RUBY
+
+      raise ParseError, "Can't build Abstract Syntax Tree" if @source.ast.nil?
+
       @tree.insert_after(@source.ast.children.first.loc.expression, setup)
     end
 
@@ -33,31 +38,12 @@ module Documented
       end
     end
 
-    def execute
-      system("#{command(file_path)} #{temp_file_path}")
+    def write(file_path)
+      File.write(file_path, @tree.process)
     end
 
-    def write
-      File.write(temp_file_path, @tree.process)
-    end
-
-    def delete
-      File.delete(temp_file_path)
-    end
-
-    private
-
-    def temp_file_path
-      file_name = 'tmp-' + File.basename(@file_path)
-      directory = File.dirname(file_path)
-      File.join(directory, file_name)
-    end
-
-    def command(file_path)
-      return 'bundle exec rspec' if file_path.end_with?('_spec.rb')
-      return 'bundle exec cucumber' if file_path.end_with?('.feature')
-    
-      'ruby'
+    def delete(file_path)
+      File.delete(file_path)
     end
   end
 end

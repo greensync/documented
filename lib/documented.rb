@@ -3,6 +3,7 @@ require_relative './tracer'
 require_relative './renderer'
 
 module Documented
+  # TODO: Merge this with Tracer.
   class << self
     def setup(file_path)
       @@file_path = file_path
